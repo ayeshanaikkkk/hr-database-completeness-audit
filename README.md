@@ -1,40 +1,104 @@
-\# HR Database Completeness Check
-
-
+# HR Database Completeness Check
 
 An independent data-quality audit of a relational HR database, prepared for a Pune firm planning to migrate to a new system.
 
-
-
-\## The problem
-
+## The problem
 Before migrating, the firm needs to know how complete and consistent its HR data really is. This project measures that with reproducible SQL checks and a scoring method.
 
-
-
-\## The database
-
+## The database
 Synthetic data for 5,000 employees across six related tables: employees, departments, positions, salaries, attendance and leave. Realistic errors were injected on purpose, so the true number of defects is known.
 
+## What the project does
+- Runs 50 SQL checks: missing values, orphan keys, duplicate employees, overlapping salary and position histories, contradictory dates, and business-rule breaks
+- Gives each issue a severity weight and calculates scores per table, field and overall
+- Provides a reusable audit script that runs on any snapshot and writes results to an audit log
+- Compares two snapshots to show which issues are improving or worsening
+
+## Project structure
+- `src/` - data generator, check catalogue, audit procedure, comparison, charts and report builder
+- `sql/` - all 50 audit queries as one standalone SQL script (`audit_queries.sql`)
+- `report/` - the four-page audit report (Word and PDF)
+
+More files (data and results) will be added over the coming days.
+
+## Severity weights
+Critical = 5, High = 3, Medium = 2, Low = 1. Score = 100 x (1 - weighted failure rate).
+
+## Check catalogue (50 checks)
+Each check has a count query, a denominator and example records in `sql/audit_queries.sql`.
 
 
-\## What the project does
+### Completeness
 
-\- Runs 50 SQL checks: missing values, orphan keys, duplicate employees, overlapping salary and position histories, contradictory dates, and business-rule breaks
+| ID | Table.field | Severity | What it checks |
+|---|---|---|---|
+| C01 | employees.email | Medium | Email missing or blank |
+| C02 | employees.phone | Low | Phone missing or blank |
+| C03 | employees.dob | High | Date of birth missing |
+| C04 | employees.pan_number | Medium | PAN (tax ID) missing or blank |
+| C05 | employees.join_date | Critical | Join date missing |
+| C06 | employees.dept_id | High | Department not assigned |
+| C07 | employees.manager_id | Medium | Manager missing (excluding CEO emp_id=1) |
+| C08 | employees.first_name | Low | First or last name blank |
+| C09 | salaries.base_salary | High | Base salary missing |
+| C10 | salaries.effective_from | Low | Salary effective_from missing |
+| C11 | positions.title | Low | Position title missing |
+| C12 | positions.start_date | Medium | Position start date missing |
+| C13 | attendance.check_out | Medium | Present day with no check-out time |
+| C14 | leave.end_date | Medium | Leave end date missing |
+| C15 | leave.leave_type | Low | Leave type missing |
+| C16 | departments.head_emp_id | Low | Department head not assigned |
 
-\- Gives each issue a severity weight and calculates scores per table, field and overall
+### Referential integrity
 
-\- Provides a reusable audit script that runs on any snapshot and writes results to an audit log
+| ID | Table.field | Severity | What it checks |
+|---|---|---|---|
+| R01 | employees.dept_id | High | employees.dept_id not found in departments |
+| R02 | employees.manager_id | Medium | employees.manager_id not found in employees |
+| R03 | positions.emp_id | Critical | positions.emp_id has no employee (orphan) |
+| R04 | salaries.emp_id | Critical | salaries.emp_id has no employee (orphan) |
+| R05 | attendance.emp_id | High | attendance.emp_id has no employee (orphan) |
+| R06 | leave.emp_id | High | leave.emp_id has no employee (orphan) |
+| R07 | positions.dept_id | Medium | positions.dept_id not found in departments |
+| R08 | departments.head_emp_id | Low | departments.head_emp_id not found in employees |
 
-\- Compares two snapshots to show which issues are improving or worsening
+### Uniqueness
 
+| ID | Table.field | Severity | What it checks |
+|---|---|---|---|
+| U01 | employees.first_name | Critical | Duplicate employees (same first name + last name + DOB, case-insensitive); counts all records in a duplicate group |
+| U02 | employees.email | Medium | Duplicate email addresses (case-insensitive) |
+| U03 | employees.pan_number | High | Duplicate PAN (tax ID) on different employees |
+| U04 | attendance.att_date | Medium | Duplicate attendance rows (same employee + date); counts all rows in a group |
 
+### Consistency / validity
 
-\## Project structure
+| ID | Table.field | Severity | What it checks |
+|---|---|---|---|
+| K01 | employees.termination_date | Critical | Termination date earlier than join date |
+| K02 | employees.status | High | Status 'Active' but has a termination date |
+| K03 | employees.status | High | Status 'Terminated' but termination date missing |
+| K04 | employees.dob | High | Employee under 18 at joining or DOB in the future |
+| K05 | salaries.effective_to | Critical | Overlapping salary periods for the same employee (employees affected) |
+| K06 | positions.end_date | High | Overlapping position periods for the same employee (employees affected) |
+| K07 | salaries.base_salary | Critical | Salary <= 0 or implausibly high (> INR 5 crore) |
+| K08 | salaries.effective_to | Medium | Salary effective_to earlier than effective_from |
+| K09 | leave.end_date | Medium | Leave end date before start date |
+| K10 | leave.days | Medium | Leave 'days' does not equal end - start + 1 |
+| K11 | attendance.check_out | Medium | Check-out time not after check-in time |
+| K12 | attendance.att_date | Medium | Attendance dated before join date or after termination date |
+| K13 | salaries.effective_from | High | Salary effective before employee's join date |
+| K14 | employees.email | Low | Email format invalid (no @ / domain) |
+| K15 | employees.status | Medium | Status outside allowed values (Active / Terminated / On Leave) |
 
-\- `src/` - data generator, check catalogue, audit procedure, comparison, charts and report builder
+### Business rules
 
-
-
-More files (SQL queries, data, results and report) will be added over the coming days.
-
+| ID | Table.field | Severity | What it checks |
+|---|---|---|---|
+| B01 | positions.is_current | Critical | Active employee with NO current position |
+| B02 | positions.is_current | Critical | Active employee with MORE THAN ONE current position |
+| B03 | salaries.is_current | Critical | Active employee with NO current salary record |
+| B04 | salaries.is_current | Critical | Active employee with MORE THAN ONE current salary record |
+| B05 | employees.status | High | Terminated employee still holding a current position or salary |
+| B06 | positions.end_date | Medium | Current position (is_current=1) that has an end date |
+| B07 | salaries.effective_to | Medium | Current salary (is_current=1) that has an end date |

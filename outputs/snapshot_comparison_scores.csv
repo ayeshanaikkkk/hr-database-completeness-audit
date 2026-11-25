@@ -1,0 +1,13 @@
+level,key,score_A,score_B,delta,trend
+dimension,COMP,97.96,98.46,0.5,Improving
+dimension,CONS,98.64,98.37,-0.269999999999996,Worsening
+dimension,REF,99.17,98.35,-0.8200000000000074,Worsening
+dimension,RULE,98.62,98.66,0.03999999999999204,Stable
+dimension,UNIQ,96.75,97.98,1.230000000000004,Improving
+overall,ALL,98.41,98.41,0.0,Stable
+table,attendance,98.64,98.84,0.20000000000000284,Improving
+table,departments,91.29,86.74,-4.550000000000011,Worsening
+table,employees,98.07,98.59,0.5200000000000102,Improving
+table,leave,98.92,98.86,-0.060000000000002274,Stable
+table,positions,98.88,98.31,-0.5699999999999932,Worsening
+table,salaries,98.77,98.6,-0.1700000000000017,Worsening

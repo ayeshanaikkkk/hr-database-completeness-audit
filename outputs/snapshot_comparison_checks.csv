@@ -1,0 +1,51 @@
+check_id,tbl,field,dimension,severity,weight,description,count_A,denom_A,rate_A,count_B,denom_B,rate_B,delta_count,delta_pp,trend,weighted_impact_change
+R05,attendance,emp_id,REF,High,3,attendance.emp_id has no employee (orphan),100,50350,0.00199,302,50552,0.00597,202,0.39879,Worsening,606
+K05,salaries,effective_to,CONS,Critical,5,Overlapping salary periods for the same employee (employees affected),205,5033,0.04073,299,5072,0.05895,94,1.82199,Worsening,470
+R03,positions,emp_id,REF,Critical,5,positions.emp_id has no employee (orphan),38,9491,0.00400,94,9600,0.00979,56,0.57879,Worsening,280
+K12,attendance,att_date,CONS,Medium,2,Attendance dated before join date or after termination date,826,50350,0.01641,962,50552,0.01903,136,0.26247,Worsening,272
+K06,positions,end_date,CONS,High,3,Overlapping position periods for the same employee (employees affected),150,5038,0.02977,240,5094,0.04711,90,1.73405,Worsening,270
+B02,positions,is_current,RULE,Critical,5,Active employee with MORE THAN ONE current position,51,4353,0.01172,104,4351,0.02390,53,1.21865,Worsening,265
+R04,salaries,emp_id,REF,Critical,5,salaries.emp_id has no employee (orphan),33,10929,0.00302,72,10969,0.00656,39,0.35445,Worsening,195
+R01,employees,dept_id,REF,High,3,employees.dept_id not found in departments,60,4950,0.01212,108,4950,0.02182,48,0.96970,Worsening,144
+K13,salaries,effective_from,CONS,High,3,Salary effective before employee's join date,60,10929,0.00549,103,10969,0.00939,43,0.39001,Worsening,129
+R02,employees,manager_id,REF,Medium,2,employees.manager_id not found in employees,30,4924,0.00609,60,4924,0.01219,30,0.60926,Worsening,60
+C05,employees,join_date,COMP,Critical,5,Join date missing,20,5000,0.00400,30,5000,0.00600,10,0.20000,Worsening,50
+R06,leave,emp_id,REF,High,3,leave.emp_id has no employee (orphan),23,5811,0.00396,35,5823,0.00601,12,0.20526,Worsening,36
+U02,employees,email,UNIQ,Medium,2,Duplicate email addresses (case-insensitive),86,4800,0.01792,100,4900,0.02041,14,0.24915,Worsening,28
+B06,positions,end_date,RULE,Medium,2,Current position (is_current=1) that has an end date,11,4558,0.00241,17,4605,0.00369,6,0.12783,Worsening,12
+K11,attendance,check_out,CONS,Medium,2,Check-out time not after check-in time,263,43843,0.00600,269,44793,0.00601,6,0.00067,Stable,12
+B04,salaries,is_current,RULE,Critical,5,Active employee with MORE THAN ONE current salary record,60,4353,0.01378,61,4351,0.01402,1,0.02362,Stable,5
+R08,departments,head_emp_id,REF,Low,1,departments.head_emp_id not found in employees,1,11,0.09091,2,11,0.18182,1,9.09091,Worsening,1
+C09,salaries,base_salary,COMP,High,3,Base salary missing,87,10929,0.00796,87,10969,0.00793,0,-0.00290,Stable,0
+C16,departments,head_emp_id,COMP,Low,1,Department head not assigned,1,12,0.08333,1,12,0.08333,0,0.00000,Stable,0
+K02,employees,status,CONS,High,3,Status 'Active' but has a termination date,43,4353,0.00988,43,4351,0.00988,0,0.00045,Stable,0
+R07,positions,dept_id,REF,Medium,2,positions.dept_id not found in departments,28,9491,0.00295,28,9600,0.00292,0,-0.00335,Stable,0
+K15,employees,status,CONS,Medium,2,Status outside allowed values (Active / Terminated / On Leave),25,5000,0.00500,25,5000,0.00500,0,0.00000,Stable,0
+U04,attendance,att_date,UNIQ,Medium,2,Duplicate attendance rows (same employee + date); counts all rows in a group,486,50350,0.00965,486,50552,0.00961,0,-0.00386,Stable,0
+K09,leave,end_date,CONS,Medium,2,Leave end date before start date,46,5694,0.00808,46,5707,0.00806,0,-0.00184,Stable,0
+K10,leave,days,CONS,Medium,2,Leave 'days' does not equal end - start + 1,85,5694,0.01493,85,5707,0.01489,0,-0.00340,Stable,0
+C15,leave,leave_type,COMP,Low,1,Leave type missing,58,5811,0.00998,58,5823,0.00996,0,-0.00206,Stable,0
+C10,salaries,effective_from,COMP,Low,1,Salary effective_from missing,33,10929,0.00302,33,10969,0.00301,0,-0.00110,Stable,0
+C11,positions,title,COMP,Low,1,Position title missing,95,9491,0.01001,95,9600,0.00990,0,-0.01136,Stable,0
+C07,employees,manager_id,COMP,Medium,2,Manager missing (excluding CEO emp_id=1),75,4999,0.01500,75,4999,0.01500,0,0.00000,Stable,0
+C06,employees,dept_id,COMP,High,3,Department not assigned,50,5000,0.01000,50,5000,0.01000,0,0.00000,Stable,0
+K08,salaries,effective_to,CONS,Medium,2,Salary effective_to earlier than effective_from,27,6290,0.00429,27,6301,0.00429,0,-0.00075,Stable,0
+K03,employees,status,CONS,High,3,Status 'Terminated' but termination date missing,5,434,0.01152,5,436,0.01147,0,-0.00528,Stable,0
+C12,positions,start_date,COMP,Medium,2,Position start date missing,39,9491,0.00411,38,9600,0.00396,-1,-0.01508,Stable,-2
+C14,leave,end_date,COMP,Medium,2,Leave end date missing,117,5811,0.02013,116,5823,0.01992,-1,-0.02132,Stable,-2
+B01,positions,is_current,RULE,Critical,5,Active employee with NO current position,72,4353,0.01654,71,4351,0.01632,-1,-0.02222,Stable,-5
+K01,employees,termination_date,CONS,Critical,5,Termination date earlier than join date,3,470,0.00638,2,471,0.00425,-1,-0.21367,Improving,-5
+K04,employees,dob,CONS,High,3,Employee under 18 at joining or DOB in the future,36,4880,0.00738,34,4920,0.00691,-2,-0.04665,Stable,-6
+C08,employees,first_name,COMP,Low,1,First or last name blank,20,5000,0.00400,10,5000,0.00200,-10,-0.20000,Improving,-10
+B07,salaries,effective_to,RULE,Medium,2,Current salary (is_current=1) that has an end date,24,4588,0.00523,17,4614,0.00368,-7,-0.15466,Improving,-14
+B05,employees,status,RULE,High,3,Terminated employee still holding a current position or salary,13,434,0.02995,8,436,0.01835,-5,-1.16053,Improving,-15
+K14,employees,email,CONS,Low,1,Email format invalid (no @ / domain),60,4800,0.01250,18,4900,0.00367,-42,-0.88265,Improving,-42
+C02,employees,phone,COMP,Low,1,Phone missing or blank,350,5000,0.07000,210,5000,0.04200,-140,-2.80000,Improving,-140
+C04,employees,pan_number,COMP,Medium,2,PAN (tax ID) missing or blank,250,5000,0.05000,175,5000,0.03500,-75,-1.50000,Improving,-150
+C03,employees,dob,COMP,High,3,Date of birth missing,100,5000,0.02000,50,5000,0.01000,-50,-1.00000,Improving,-150
+B03,salaries,is_current,RULE,Critical,5,Active employee with NO current salary record,51,4353,0.01172,18,4351,0.00414,-33,-0.75791,Improving,-165
+C01,employees,email,COMP,Medium,2,Email missing or blank,200,5000,0.04000,100,5000,0.02000,-100,-2.00000,Improving,-200
+K07,salaries,base_salary,CONS,Critical,5,Salary <= 0 or implausibly high (> INR 5 crore),76,10842,0.00701,31,10882,0.00285,-45,-0.41610,Improving,-225
+U03,employees,pan_number,UNIQ,High,3,Duplicate PAN (tax ID) on different employees,229,4750,0.04821,132,4825,0.02736,-97,-2.08530,Improving,-291
+U01,employees,first_name,UNIQ,Critical,5,"Duplicate employees (same first name + last name + DOB, case-insensitive); counts all records in a duplicate group",190,5000,0.03800,100,5000,0.02000,-90,-1.80000,Improving,-450
+C13,attendance,check_out,COMP,Medium,2,Present day with no check-out time,1574,39333,0.04002,792,39481,0.02006,-782,-1.99570,Improving,-1564

@@ -35,13 +35,33 @@ Files in `data/`:
 
 The databases have no foreign-key or unique constraints on purpose, to mimic a legacy system that let bad data through.
 
+## Results
+
+### Key findings
+- All 50 checks found defects in both snapshots. The weighted overall score is about 98.4/100 for both, but this is misleading because averaging many small rates hides serious problems.
+- **223 of 4,353 active employees (5.1%)** in snapshot A break the rule "exactly one current position and one current salary" (242 of 4,351, 5.6%, in snapshot B). This is the main payroll risk.
+- Between snapshots A and B, 14 checks improved, 15 worsened and 21 were stable. Contact and tax fields (email, phone, PAN, date of birth) improved, but orphan records grew in every child table.
+- Biggest critical issues: overlapping salary periods (205 employees in A, 299 in B), duplicate employees (190 records) and orphan salary and position rows.
+
+### Failure rate by table and dimension
+![Table heatmap](outputs/heatmap_tables.png)
+
+### Failure rate by field and dimension (snapshot A)
+![Field heatmap](outputs/heatmap_fields_A.png)
+
+### Snapshot comparison (A to B)
+![Snapshot comparison](outputs/snapshot_delta.png)
+
+Red bars show checks that got worse and blue bars show checks that improved. The full comparison is in `outputs/snapshot_comparison_checks.csv`.
+
 ## Project structure
 - `src/` - data generator, check catalogue, audit procedure, comparison, charts and report builder
 - `data/` - the three SQLite snapshots, ground-truth error counts and the audit log
+- `outputs/` - heatmaps, snapshot comparison chart and comparison CSVs
 - `sql/` - all 50 audit queries as one standalone SQL script (`audit_queries.sql`)
 - `report/` - the four-page audit report (Word and PDF)
 
-More files (results and charts) will be added over the coming days.
+More files (requirements, tests and limitations) will be added over the coming days.
 
 ## Severity weights
 Critical = 5, High = 3, Medium = 2, Low = 1. Score = 100 x (1 - weighted failure rate).
